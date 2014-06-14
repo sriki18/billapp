@@ -22,11 +22,13 @@ def updateFile():
     f[2] = str(delay)
     f[5] = str(mainDelay)
     f[8] = str(colour1)
+    f[11] = str(bcDelay)
 
     f1 = ' '.join(f[:3])
     f2 = ' '.join(f[3:6])
-    f3 = ' '.join(f[6:])
-    f = '\n'.join([f1,f2,f3])
+    f3 = ' '.join(f[6:9])
+    f4 = ' '.join(f[9:])
+    f = '\n'.join([f1,f2,f3,f4])
 
     g=open('settings.txt','w')
     print(f, '\n')
@@ -46,40 +48,50 @@ def updateDelay(*args):
         pass
     updateFile()
 
-def decDelay():
-    global delay
-    delay = int((delay*10) - 1)/10.0
-    if delay < 1:
-        message.set("Value can't reduce below 1.")
-        delay = int((delay*10) + 1)/10
-    else:
-        message.set("")
-    delayString.set(delay)
-    updateFile()
-
-def incDelay():
+def cDelay(incordec = int):
     global delay
     message.set("")
-    delay = int((delay*10) + 1)/10.0
+    if incordec == 1:
+        delay = int((delay*10) + 1)/10.0
+    else:
+        delay = int((delay*10) - 1)/10.0
+        if delay < 1:
+            message.set("Value can't reduce below 1.")
+            delay = int((delay*10) + 1)/10
+        else:
+            message.set("")
     delayString.set(delay)
     updateFile()
 
-def mdecDelay():
+def cmDelay(incordec = int):
     global mainDelay
-    mainDelay = int((mainDelay*10) - 1)/10.0
-    if mainDelay < 1:
-        message.set("Value can't reduce below 1.")
+    message.set("")
+    if incordec == 1:
         mainDelay = int((mainDelay*10) + 1)/10.0
     else:
-        message.set("")
+        mainDelay = int((mainDelay*10) - 1)/10.0
+        if mainDelay < 1:
+            message.set("Value can't reduce below 1.")
+            mainDelay = int((mainDelay*10) + 1)/10.0
+        else:
+            message.set("")
     mainDelayString.set(mainDelay)
     updateFile()
 
-def mincDelay():
-    global mainDelay
+def cbcDelay(incordec = int):
+    global bcDelay
+    #print "incordec is",incordec
     message.set("")
-    mainDelay = int((mainDelay*10) + 1)/10.0
-    mainDelayString.set(mainDelay)
+    if incordec == 1:
+        bcDelay = int((bcDelay*10) + 1)/10.0
+    else:
+        bcDelay = int((bcDelay*10) - 1)/10.0
+        if bcDelay < 0.5:
+            message.set("Value can't reduce below 0.5.")
+            bcDelay = int((bcDelay*10) + 1)/10.0
+        else:
+            message.set("")
+    bcDelayString.set(bcDelay)
     updateFile()
 
 def changeColour():
@@ -382,7 +394,7 @@ def playAudio():
     p.terminate()
 
 def initVals():
-    global delay,mainDelay,colour1
+    global delay,mainDelay,colour1,bcDelay
     g=open('settings.txt','r')
     f=g.read()
     h=f.replace(' ','\n')
@@ -393,6 +405,8 @@ def initVals():
     tempDelay=h[h.index('mainDelay')+2]
     mainDelay=float(tempDelay)
     colour1=h[h.index('highlight-color')+2]
+    tempDelay = h[h.index('bcDelay')+2]
+    bcDelay = float(tempDelay)
     g.close()
 
 initVals()
@@ -403,7 +417,7 @@ mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
 mainframe.columnconfigure(0, weight=1)
 mainframe.rowconfigure(0, weight=1)
 #rowsArray = [1,3,4,5,6,8,9,10,11,13,14,15,16,17,18,19,20,21,22,12,23,24]
-rowsArray = [1,3,4,5,6,8,9,10,11,14,15,16,17,18,19,20,21,22,13,12,23,24]
+rowsArray = [1,3,4,5,6,8,9,10,11,14,15,16,17,18,19,20,21,22,13,12,23,24,25,26]
 message = StringVar()
 itemList = []
 #second line vars
@@ -433,6 +447,10 @@ audioString = StringVar()
 aItemString = StringVar()
 currAudioString = StringVar()
 durationString = StringVar()
+#tenth line - bcDelay
+bcDelayString = StringVar()
+bcDelayString.set(bcDelay)
+
 
 #first line
 ttk.Label(mainframe, text = "Parameter").grid(row = rowsArray[0], column = 1)
@@ -445,16 +463,16 @@ ttk.Label(mainframe, text = "Current Value").grid(row = rowsArray[0], column = 6
 ttk.Label(mainframe, text = "Delay between blocks : ").grid(row = rowsArray[1], column = 1)
 delayEntry = ttk.Entry(mainframe, text = "Entry", textvariable = delayString)
 delayEntry.grid(row = rowsArray[1], column = 2)
-ttk.Button(mainframe, text="+", command=incDelay, width = 4).grid(column = 4, row = rowsArray[1])
-ttk.Button(mainframe, text="-", command=decDelay, width = 4).grid(column = 5, row = rowsArray[1])
+ttk.Button(mainframe, text="+", command=lambda : cDelay(1), width = 4).grid(column = 4, row = rowsArray[1])
+ttk.Button(mainframe, text="-", command=lambda : cDelay(-1), width = 4).grid(column = 5, row = rowsArray[1])
 ttk.Label(mainframe, textvariable = delayString).grid(row = rowsArray[1], column = 6)
 
 #third line
 ttk.Label(mainframe, text = "Delay between main blocks : ").grid(row = rowsArray[2], column = 1)
 delayEntry = ttk.Entry(mainframe, text = "Entry", textvariable = mainDelayString)
 delayEntry.grid(row = rowsArray[2], column = 2)
-ttk.Button(mainframe, text="+", command=mincDelay, width = 4).grid(column = 4, row = rowsArray[2])
-ttk.Button(mainframe, text="-", command=mdecDelay, width = 4).grid(column = 5, row = rowsArray[2])
+ttk.Button(mainframe, text="+", command=lambda:cmDelay(1), width = 4).grid(column = 4, row = rowsArray[2])
+ttk.Button(mainframe, text="-", command=lambda:cmDelay(-1), width = 4).grid(column = 5, row = rowsArray[2])
 ttk.Label(mainframe, textvariable = mainDelayString).grid(row = rowsArray[2], column = 6)
 
 #colourchooser
@@ -537,9 +555,16 @@ ttk.Label(mainframe, text = "Select a file : " ).grid(row = rowsArray[21], colum
 ttk.Button(mainframe, text="Select Audio ", command=audioUpdater).grid(column = 4, row = rowsArray[21])
 ttk.Button(mainframe, text="Modify ", command=modifyBinFile).grid(column = 6, row = rowsArray[21])
 
+ttk.Label(mainframe, text = "Delay in bill finalising : ").grid(row = rowsArray[22], column = 1)
+delayEntry = ttk.Entry(mainframe, text = "Entry", textvariable = bcDelayString)
+delayEntry.grid(row = rowsArray[22], column = 2)
+ttk.Button(mainframe, text="+", command=lambda:cbcDelay(1), width = 4).grid(column = 4, row = rowsArray[22])
+ttk.Button(mainframe, text="-", command=lambda:cbcDelay(-1), width = 4).grid(column = 5, row = rowsArray[22])
+ttk.Label(mainframe, textvariable = bcDelayString).grid(row = rowsArray[22], column = 6)
+
 initItemList()
 #message string
-ttk.Label(mainframe, textvariable = message).grid(row = rowsArray[20], column = 1)
+ttk.Label(mainframe, textvariable = message).grid(row = rowsArray[23], column = 1)
 for child in mainframe.winfo_children(): child.grid_configure(padx=5, pady=5)
 
 root.bind('<Return>', updateDelay)
