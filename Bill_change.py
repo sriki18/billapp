@@ -5,8 +5,8 @@ import threading
 import thread
 import tkFont
 import subprocess
-from Run import bill_change_delay
-print bill_change_delay
+#from Run import bill_change_delay
+#print bill_change_delay
 
 rows=0
 fb=0
@@ -19,7 +19,15 @@ counting=0
 customFont=0
 customFont1=0
 No_of_Windows=0
-bill_change_delay = 0.5
+
+#To change the switching delay
+g=open('settings.txt','r')
+f=g.read()
+h=f.replace(' ','\n')
+h=h.replace('\r','\n')
+h=h.split('\n')
+bill_change_delay = float(h[h.index('bcDelay') + 2])
+print(bill_change_delay)
 
 def firstthread():
 	global counting
