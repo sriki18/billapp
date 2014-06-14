@@ -381,8 +381,21 @@ def playAudio():
 
     p.terminate()
 
+def initVals():
+    global delay,mainDelay,colour1
+    g=open('settings.txt','r')
+    f=g.read()
+    h=f.replace(' ','\n')
+    h=h.replace('\r','\n')
+    h=h.split('\n')
+    tempDelay=h[h.index('delay')+2]
+    delay=float(tempDelay)
+    tempDelay=h[h.index('mainDelay')+2]
+    mainDelay=float(tempDelay)
+    colour1=h[h.index('highlight-color')+2]
+    g.close()
 
-
+initVals()
 root=Tk()
 root.title("Settings")
 mainframe = ttk.Frame(root, padding="3 3 12 12")
@@ -394,15 +407,15 @@ rowsArray = [1,3,4,5,6,8,9,10,11,14,15,16,17,18,19,20,21,22,13,12,23,24]
 message = StringVar()
 itemList = []
 #second line vars
-delay = 4.0
+#delay = 4.0
 delayString = StringVar()
 delayString.set(delay)
 #third line vars
-mainDelay = 2.0
+#mainDelay = 2.0
 mainDelayString = StringVar()
 mainDelayString.set(mainDelay)
 #fourth line vars
-colour1 = '#00ff00'
+#colour1 = '#00ff00'
 #sixth line vars -add item
 itemToAdd = ''
 itemName = StringVar()
