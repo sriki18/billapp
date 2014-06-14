@@ -9,21 +9,28 @@ import pyaudio,wave,sys
 
 
 def updateFile():
-    global delay, mainDelay
+    global delay, mainDelay, colour1
     g=open('settings.txt','r+')
     delay = float(delay)
     mainDelay = float(mainDelay)
     f=g.read()
+    g.close()
     print(f)
-    g.seek(8)
-    g.write(str(delay))
-    g.write("\n")
-    g.seek(24)
-    g.write(str(mainDelay))
-    g.write("\n")
-    g.seek(0)
-    f=g.read()
-    print(f)
+    f = f.replace('\n', ' ')
+    f = f.split(' ')
+
+    f[2] = str(delay)
+    f[5] = str(mainDelay)
+    f[8] = str(colour1)
+
+    f1 = ' '.join(f[:3])
+    f2 = ' '.join(f[3:6])
+    f3 = ' '.join(f[6:])
+    f = '\n'.join([f1,f2,f3])
+
+    g=open('settings.txt','w')
+    print(f, '\n')
+    g.write(f)
     g.close()
 
 def updateDelay(*args):
@@ -80,6 +87,7 @@ def changeColour():
     (rgb, hexColour) = tkcc.askcolor()
     colour1 = hexColour
     print(colour1)
+    updateFile()
     colFrame1.config(bg = hexColour)
 
 
