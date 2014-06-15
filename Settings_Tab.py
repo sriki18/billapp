@@ -184,6 +184,9 @@ def modifyBinFile() :
         if itemList[k].name == aItemString.get():
             itemList[k].audio = audioString.get()
             print(itemList[k].audio, itemList[k].name)
+        if itemList[k].name == qItemString.get():
+            itemList[k].quantities = quantitiesString.get()
+            print(itemList[k].quantities, itemList[k].name)
     dataFile = open('data.pkl', 'wb')
     pickle.dump(itemList, dataFile)
     dataFile.close()
@@ -192,6 +195,9 @@ def modifyBinFile() :
     currPriceString.set('')
     aItemString.set('')
     audioString.set('')
+    qItemString.set('')
+    quantitiesString.set('')
+    currQuantitiesString.set('')
     initItemList()
 
 def printTempPrice(*args):
@@ -202,6 +208,15 @@ def printTempPrice(*args):
     for k in range(len(itemList)):
         if itemList[k].name == pItemString.get():
             currPriceString.set(str(itemList[k].cost))
+
+def printTempQuantities(*args):
+    global qItemString
+    pklFile = open('data.pkl', 'rb')
+    itemList = pickle.load(pklFile)
+    pklFile.close()
+    for k in range(len(itemList)):
+        if itemList[k].name == qItemString.get():
+            currQuantitiesString.set(str(itemList[k].quantities))
 
 def audioUpdater() :
     global audioString
@@ -417,7 +432,7 @@ mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
 mainframe.columnconfigure(0, weight=1)
 mainframe.rowconfigure(0, weight=1)
 #rowsArray = [1,3,4,5,6,8,9,10,11,13,14,15,16,17,18,19,20,21,22,12,23,24]
-rowsArray = [1,3,4,5,6,8,9,10,11,14,15,16,17,18,19,20,21,22,13,12,23,24,25,26]
+rowsArray = [1,3,4,5,6,8,9,10,11,14,15,16,17,18,19,20,21,22,13,12,23,24,25,26,27,28,29]
 message = StringVar()
 itemList = []
 #second line vars
@@ -450,6 +465,10 @@ durationString = StringVar()
 #tenth line - bcDelay
 bcDelayString = StringVar()
 bcDelayString.set(bcDelay)
+#eleventh line - modify quantities
+quantitiesString = StringVar()
+qItemString = StringVar()
+currQuantitiesString = StringVar()
 
 
 #first line
@@ -555,12 +574,29 @@ ttk.Label(mainframe, text = "Select a file : " ).grid(row = rowsArray[21], colum
 ttk.Button(mainframe, text="Select Audio ", command=audioUpdater).grid(column = 4, row = rowsArray[21])
 ttk.Button(mainframe, text="Modify ", command=modifyBinFile).grid(column = 6, row = rowsArray[21])
 
+#Bill finalising delay
+
 ttk.Label(mainframe, text = "Delay in bill finalising : ").grid(row = rowsArray[22], column = 1)
 delayEntry = ttk.Entry(mainframe, text = "Entry", textvariable = bcDelayString)
 delayEntry.grid(row = rowsArray[22], column = 2)
 ttk.Button(mainframe, text="+", command=lambda:cbcDelay(1), width = 4).grid(column = 4, row = rowsArray[22])
 ttk.Button(mainframe, text="-", command=lambda:cbcDelay(-1), width = 4).grid(column = 5, row = rowsArray[22])
 ttk.Label(mainframe, textvariable = bcDelayString).grid(row = rowsArray[22], column = 6)
+
+#Modify quantities
+
+ttk.Label(mainframe, text = "Modify Quantities: " ).grid(row = rowsArray[23], column = 1)
+
+ttk.Label(mainframe, text = "Select item : " ).grid(row = rowsArray[24], column = 2)
+ttk.Label(mainframe, textvariable = currQuantitiesString ).grid(row = rowsArray[24], column = 6)
+priceComboBox = ttk.Combobox(mainframe, textvariable = qItemString)
+priceComboBox.grid(row = rowsArray[24], column = 4)
+priceComboBox.bind('<<ComboboxSelected>>', printTempQuantities)
+
+ttk.Label(mainframe, text = "New Quantities : " ).grid(row = rowsArray[25], column = 2)
+priceEntry = ttk.Entry(mainframe, text = "Entry", textvariable = quantitiesString)
+priceEntry.grid(row = rowsArray[25], column = 4)
+ttk.Button(mainframe, text="Modify", command=modifyBinFile).grid(column = 6, row = rowsArray[25])
 
 initItemList()
 #message string
