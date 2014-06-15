@@ -49,13 +49,14 @@ Cost=[]
 
 class Item():
 
-    def __init__(self, name, image, cost, category, audio):
+    def __init__(self, name, image, cost, category, audio, quantities=[1,2,3,4,5,6]):
 
         self.name = name
         self.image = image
         self.cost = cost
         self.category = category
         self.audio = audio
+        self.quantities = quantities
 
 pklFile = open('data.pkl', 'r')
 itemList=pickle.load(pklFile)
