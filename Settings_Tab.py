@@ -148,16 +148,21 @@ def addItem():
     audioComboBox['values'] = tempList
 
 def initItemList() :
-    global itemComboBox,itemList,priceComboBox
+    global itemComboBox,itemList,priceComboBox, quantityComboBox
+    print 'here'
     pklFile = open('data.pkl', 'rb')
+    print 'here'
     itemList = pickle.load(pklFile)
+    print 'here3'
     pklFile.close()
     tempList = []
     for k in range(len(itemList)):
         tempList.append(itemList[k].name)
     itemComboBox['values'] = list(tempList)
     priceComboBox['values'] = list(tempList)
+    print 'here',itemComboBox['values'], priceComboBox['values']
     audioComboBox['values'] = list(tempList)
+    quantityComboBox['values'] = list(tempList)
 
 
 def removeItem() :
@@ -589,20 +594,20 @@ ttk.Label(mainframe, text = "Modify Quantities: " ).grid(row = rowsArray[23], co
 
 ttk.Label(mainframe, text = "Select item : " ).grid(row = rowsArray[24], column = 2)
 ttk.Label(mainframe, textvariable = currQuantitiesString ).grid(row = rowsArray[24], column = 6)
-priceComboBox = ttk.Combobox(mainframe, textvariable = qItemString)
-priceComboBox.grid(row = rowsArray[24], column = 4)
-priceComboBox.bind('<<ComboboxSelected>>', printTempQuantities)
+quantityComboBox = ttk.Combobox(mainframe, textvariable = qItemString)
+quantityComboBox.grid(row = rowsArray[24], column = 4)
+quantityComboBox.bind('<<ComboboxSelected>>', printTempQuantities)
 
 ttk.Label(mainframe, text = "New Quantities : " ).grid(row = rowsArray[25], column = 2)
 priceEntry = ttk.Entry(mainframe, text = "Entry", textvariable = quantitiesString)
 priceEntry.grid(row = rowsArray[25], column = 4)
 ttk.Button(mainframe, text="Modify", command=modifyBinFile).grid(column = 6, row = rowsArray[25])
 
-initItemList()
+
 #message string
 ttk.Label(mainframe, textvariable = message).grid(row = rowsArray[23], column = 1)
 for child in mainframe.winfo_children(): child.grid_configure(padx=5, pady=5)
-
+initItemList()
 root.bind('<Return>', updateDelay)
 
 root.mainloop()
