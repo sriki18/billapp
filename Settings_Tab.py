@@ -139,6 +139,7 @@ def addItem():
     dataFile = open('data.pkl', 'wb')
     pickle.dump(itemList, dataFile)
     dataFile.close()
+    
     #modify the drop down box after adding item
     tempList = []
     for k in range(len(itemList)):
@@ -146,23 +147,24 @@ def addItem():
     itemComboBox['values'] = tempList
     priceComboBox['values'] = tempList
     audioComboBox['values'] = tempList
+    quantityComboBox['values'] = tempList
+    pictureComboBox['values'] = tempList
 
 def initItemList() :
-    global itemComboBox,itemList,priceComboBox, quantityComboBox
-    print 'here'
+    global itemComboBox,itemList,priceComboBox, quantityComboBox,pictureComboBox
     pklFile = open('data.pkl', 'rb')
-    print 'here'
     itemList = pickle.load(pklFile)
-    print 'here3'
+    print 'pickle loaded'
     pklFile.close()
     tempList = []
     for k in range(len(itemList)):
         tempList.append(itemList[k].name)
     itemComboBox['values'] = list(tempList)
     priceComboBox['values'] = list(tempList)
-    print 'here',itemComboBox['values'], priceComboBox['values']
+##    print 'here',itemComboBox['values'], priceComboBox['values']
     audioComboBox['values'] = list(tempList)
     quantityComboBox['values'] = list(tempList)
+    pictureComboBox['values'] = list(tempList)
 
 
 def removeItem() :
@@ -180,6 +182,7 @@ def removeItem() :
 
 def modifyBinFile() :
     global pItemString, priceString, currPriceString, aItemString, audioString
+    global pictureItemString,pictureString, currPicturesString
     pklFile = open('data.pkl', 'rb')
     itemList = pickle.load(pklFile)
     pklFile.close()
@@ -192,6 +195,9 @@ def modifyBinFile() :
         if itemList[k].name == qItemString.get():
             itemList[k].quantities = quantitiesString.get()
             print(itemList[k].quantities, itemList[k].name)
+        if itemList[k].name == pictureItemString.get():
+            itemList[k].picture = pictureString.get()
+            print('picture and name', itemList[k].picture, itemList[k].name)
     dataFile = open('data.pkl', 'wb')
     pickle.dump(itemList, dataFile)
     dataFile.close()
@@ -203,6 +209,9 @@ def modifyBinFile() :
     qItemString.set('')
     quantitiesString.set('')
     currQuantitiesString.set('')
+    pictureItemString.set('')
+    pictureString.set('')
+    currPicturesString.set('')
     initItemList()
 
 def printTempPrice(*args):
@@ -223,12 +232,29 @@ def printTempQuantities(*args):
         if itemList[k].name == qItemString.get():
             currQuantitiesString.set(str(itemList[k].quantities))
 
+def printTempPicture(*args):
+    global pictureItemString
+    pklFile = open('data.pkl', 'rb')
+    itemList = pickle.load(pklFile)
+    pklFile.close()
+    for k in range(len(itemList)):
+        if itemList[k].name == pictureItemString.get():
+            currPicturesString.set(str(itemList[k].picture))
+
 def audioUpdater() :
     global audioString
     audioFileName = tkFileDialog.askopenfilename(title = "Choose audio ")
     audioFileName = audioFileName[audioFileName.rfind('/')+1:]
     audioString.set('sounds/' + audioFileName)
     print(audioString.get())
+
+def pictureUpdater() :
+    global pictureString
+    pictureFileName = tkFileDialog.askopenfilename(title = "Choose picture ")
+    pictureFileName = pictureFileName[pictureFileName.rfind('/')+1:]
+    pictureString.set('images/' + pictureFileName)
+    print('Picture updated to', pictureString.get())
+##    print(pictureString.get())
 
 def recordAudioadd():
     global meessage
@@ -437,7 +463,7 @@ mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
 mainframe.columnconfigure(0, weight=1)
 mainframe.rowconfigure(0, weight=1)
 #rowsArray = [1,3,4,5,6,8,9,10,11,13,14,15,16,17,18,19,20,21,22,12,23,24]
-rowsArray = [1,3,4,5,6,8,9,10,11,14,15,16,17,18,19,20,21,22,13,12,23,24,25,26,27,28,29]
+rowsArray = [1,3,4,5,6,8,9,10,11,14,15,16,17,18,19,20,21,22,13,12,23,24,25,26,27,28,29,30,31,32]
 message = StringVar()
 itemList = []
 #second line vars
@@ -474,6 +500,10 @@ bcDelayString.set(bcDelay)
 quantitiesString = StringVar()
 qItemString = StringVar()
 currQuantitiesString = StringVar()
+#eleventh line - modify quantities
+pictureString = StringVar()
+pictureItemString = StringVar()
+currPicturesString = StringVar()
 
 
 #first line
@@ -602,6 +632,19 @@ ttk.Label(mainframe, text = "New Quantities : " ).grid(row = rowsArray[25], colu
 priceEntry = ttk.Entry(mainframe, text = "Entry", textvariable = quantitiesString)
 priceEntry.grid(row = rowsArray[25], column = 4)
 ttk.Button(mainframe, text="Modify", command=modifyBinFile).grid(column = 6, row = rowsArray[25])
+
+#Modify picture
+
+ttk.Label(mainframe, text = "Modify Picture: " ).grid(row = rowsArray[26], column = 1)
+
+ttk.Label(mainframe, text = "Select item : " ).grid(row = rowsArray[27], column = 2)
+pictureComboBox = ttk.Combobox(mainframe, textvariable = pictureItemString)
+pictureComboBox.grid(row = rowsArray[27], column = 4)
+pictureComboBox.bind('<<ComboboxSelected>>', printTempPicture)
+ttk.Label(mainframe, textvariable = currPicturesString).grid(row = rowsArray[27], column = 6)
+
+ttk.Button(mainframe, text="Select Picture ", command=pictureUpdater).grid(column = 4, row = rowsArray[28])
+ttk.Button(mainframe, text="Modify", command=modifyBinFile).grid(column = 6, row = rowsArray[28])
 
 
 #message string
